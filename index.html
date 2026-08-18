@@ -1,119 +1,1908 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>誰でも作れる簡単オムライス</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    /* 全体 */
-    * {
-      box-sizing: border-box;
-    }
+<title>超激ムズ！イライラ棒</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: yellow;
-      color: red;
-      padding-bottom: 120px;
-    }
+<style>
 
-    /* ヘッダー */
-    header {
-      background-color: yellow;
-      color: red;
-      text-align: center;
-      padding: 30px 20px;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    header h1 {
-      margin: 0;
-    }
+body {
+  margin: 0;
+  background: yellow;
+  color: red;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  overflow-x: hidden;
+}
 
-    /* メイン */
-    main {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
-      color: red;
-    }
+header {
+  background: #440000;
+  color: white;
+  padding: 18px;
+}
 
-    section {
-      margin-bottom: 40px;
-    }
+header h1 {
+  margin: 0;
+  font-size: 40px;
+}
 
-    section h2 {
-      color: red;
-      border-bottom: 2px solid red;
-      padding-bottom: 10px;
-    }
+#info {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 10px;
+}
 
-    /* フッター */
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: yellow;
-      color: red;
-      text-align: center;
-      padding: 20px;
-    }
+#message {
+  min-height: 35px;
+  font-size: 22px;
+  font-weight: bold;
+}
 
-    footer p {
-      margin: 5px 0;
-    }
 
-    footer a {
-      color: red;
-      margin: 0 8px;
-      text-decoration: none;
-    }
+/* =========================
+   もう一度遊ぶ
+========================= */
 
-    footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
+#restartButton {
+  margin: 5px 0 18px;
+  padding: 14px 40px;
+
+  font-size: 22px;
+  font-weight: bold;
+
+  color: red;
+  background: white;
+
+  border: 3px solid red;
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  position: relative;
+  z-index: 1000;
+}
+
+#restartButton:hover {
+  background: #ffcccc;
+  transform: scale(1.05);
+}
+
+
+/* =========================
+   ゲーム
+========================= */
+
+#gameWrapper {
+  width: 1400px;
+  max-width: 98vw;
+  margin: auto;
+  position: relative;
+}
+
+canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+
+  background: white;
+
+  border: 8px solid #990000;
+
+  cursor: crosshair;
+
+  touch-action: none;
+}
+
+
+/* =========================
+   フッター
+========================= */
+
+footer {
+  margin-top: 18px;
+  padding: 15px;
+
+  background: #440000;
+  color: white;
+
+  font-weight: bold;
+}
+
+
+/* =========================
+   爆発
+========================= */
+
+#explosion {
+  position: absolute;
+
+  width: 220px;
+  height: 220px;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+
+  pointer-events: none;
+
+  display: none;
+
+  z-index: 10;
+}
+
+#explosion.active {
+  display: block;
+  animation: explosion 0.8s forwards;
+}
+
+.fire {
+  position: absolute;
+
+  width: 120px;
+  height: 120px;
+
+  left: 50px;
+  top: 50px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      white 0%,
+      yellow 20%,
+      orange 45%,
+      red 75%
+    );
+}
+
+.spark {
+  position: absolute;
+
+  width: 14px;
+  height: 90px;
+
+  left: 103px;
+  top: 5px;
+
+  background: orange;
+
+  transform-origin: 7px 105px;
+}
+
+.s1 { transform: rotate(0deg); }
+.s2 { transform: rotate(45deg); }
+.s3 { transform: rotate(90deg); }
+.s4 { transform: rotate(135deg); }
+.s5 { transform: rotate(180deg); }
+.s6 { transform: rotate(225deg); }
+.s7 { transform: rotate(270deg); }
+.s8 { transform: rotate(315deg); }
+
+@keyframes explosion {
+
+  0% {
+    transform:
+      translate(-50%, -50%)
+      scale(0.1);
+
+    opacity: 1;
+  }
+
+  40% {
+    transform:
+      translate(-50%, -50%)
+      scale(1);
+
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translate(-50%, -50%)
+      scale(2);
+
+    opacity: 0;
+  }
+}
+
+
+/* =========================
+   画面揺れ
+========================= */
+
+.shake {
+  animation: shake 0.45s;
+}
+
+@keyframes shake {
+
+  0% {
+    transform: translate(0);
+  }
+
+  20% {
+    transform: translate(-12px, 6px);
+  }
+
+  40% {
+    transform: translate(12px, -6px);
+  }
+
+  60% {
+    transform: translate(-10px, -5px);
+  }
+
+  80% {
+    transform: translate(10px, 5px);
+  }
+
+  100% {
+    transform: translate(0);
+  }
+}
+
+
+/* ==================================================
+   🎉 クリア画面
+================================================== */
+
+#clearScreen {
+
+  position: fixed;
+
+  inset: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background:
+    radial-gradient(
+      circle,
+      #ffffff 0%,
+      #fff700 25%,
+      #ff8c00 60%,
+      #ff1493 100%
+    );
+
+  display: none;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-direction: column;
+
+  z-index: 9999;
+
+  overflow: hidden;
+
+  animation:
+    clearBackground 1s infinite alternate;
+}
+
+#clearScreen.show {
+  display: flex;
+}
+
+
+/* =========================
+   CLEAR
+========================= */
+
+#clearTitle {
+
+  font-size:
+    clamp(70px, 15vw, 220px);
+
+  font-weight: 900;
+
+  color: white;
+
+  text-shadow:
+    0 0 10px #fff,
+    0 0 20px #ffff00,
+    0 0 40px #ff6600,
+    0 0 70px #ff0000;
+
+  animation:
+    clearTitleAnimation
+    0.7s
+    infinite alternate;
+
+  z-index: 20;
+}
+
+#clearSub {
+
+  font-size:
+    clamp(24px, 4vw, 60px);
+
+  font-weight: bold;
+
+  color: white;
+
+  text-shadow:
+    0 0 10px #ff0000,
+    0 0 20px #ff6600;
+
+  z-index: 20;
+}
+
+@keyframes clearTitleAnimation {
+
+  from {
+    transform:
+      scale(0.9)
+      rotate(-2deg);
+  }
+
+  to {
+    transform:
+      scale(1.1)
+      rotate(2deg);
+  }
+}
+
+@keyframes clearBackground {
+
+  from {
+    filter: hue-rotate(0deg);
+  }
+
+  to {
+    filter: hue-rotate(40deg);
+  }
+}
+
+
+/* =========================
+   クリア画面のボタン
+========================= */
+
+#clearRestartButton {
+
+  margin-top: 35px;
+
+  padding: 18px 55px;
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  color: #ff0000;
+
+  background: white;
+
+  border: 5px solid #ff0000;
+
+  border-radius: 15px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 15px white,
+    0 0 30px yellow,
+    0 0 45px red;
+
+  position: relative;
+
+  z-index: 30;
+
+  transition:
+    transform 0.15s,
+    background 0.15s;
+}
+
+#clearRestartButton:hover {
+
+  background: #ffff99;
+
+  transform: scale(1.1);
+}
+
+#clearRestartButton:active {
+
+  transform: scale(0.95);
+}
+
+
+/* =========================
+   紙吹雪
+========================= */
+
+.confetti {
+
+  position: absolute;
+
+  width: 15px;
+  height: 30px;
+
+  top: -50px;
+
+  animation:
+    confettiFall
+    linear
+    forwards;
+}
+
+@keyframes confettiFall {
+
+  0% {
+    transform:
+      translateY(-50px)
+      rotate(0deg);
+  }
+
+  100% {
+    transform:
+      translateY(110vh)
+      rotate(900deg);
+  }
+}
+
+
+/* =========================
+   星
+========================= */
+
+.star {
+
+  position: absolute;
+
+  color: white;
+
+  font-size: 40px;
+
+  animation:
+    starAnimation
+    1s
+    infinite alternate;
+
+  text-shadow:
+    0 0 10px yellow,
+    0 0 20px orange;
+}
+
+@keyframes starAnimation {
+
+  from {
+    transform:
+      scale(0.5)
+      rotate(0deg);
+
+    opacity: 0.5;
+  }
+
+  to {
+    transform:
+      scale(1.5)
+      rotate(180deg);
+
+    opacity: 1;
+  }
+}
+
+
+/* =========================
+   スマホ
+========================= */
+
+@media (max-width: 600px) {
+
+  header h1 {
+    font-size: 26px;
+  }
+
+  #info {
+    font-size: 18px;
+  }
+
+  #message {
+    font-size: 17px;
+  }
+
+  #restartButton {
+    font-size: 18px;
+    padding: 10px 25px;
+  }
+
+  #clearRestartButton {
+    font-size: 20px;
+    padding: 14px 35px;
+  }
+}
+
+</style>
 </head>
+
 
 <body>
 
-  <header>
-    <h1>誰でも作れる簡単オムライス</h1>
-  </header>
 
-  <main>
-    <section>
-      <h2>材料</h2>
-      <p>
-        ①ごはん<br>
-        ②たまご<br>
-        ③ケチャップ<br>
-        これだけ
-      </p>
-    </section>
+<header>
 
-    <section>
-      <h2>作り方</h2>
-      <p>
-        ①油を敷いて温めたフライパンにごはんをいれる。一分くらいしたらケチャップを入れてごはんと混ぜる。<br>
-        ②さらに移して形を作る。<br>
-        ③混ぜた卵を油を敷いて温めたフライパンに入れて、焦げないくらいまで温めて、皿に移す。<br>
-        ④ケチャップで好きなことを書いて完成。
-         <img src="https://github.com/ohanyou/Omelette-rice/blob/main/cupcake.jpg?raw=true" alt="サンプル">
-      </p>
-    </section>
-  </main>
+  <h1>
+    😈 超激ムズ！イライラ棒 😈
+  </h1>
 
-  <footer>
-    <p>お問い合わせ：info@example.com</p>
-    <p>
-      <a href="https://twitter.com/" target="_blank">X (Twitter)</a>
-      <a href="https://www.instagram.com/" target="_blank">Instagram</a>
-      <a href="https://www.facebook.com/" target="_blank">Facebook</a>
-    </p>
-  </footer>
+</header>
+
+
+<div id="info">
+  ⏱️ 時間制限なし！
+</div>
+
+
+<div id="message">
+  STARTから挑戦！
+</div>
+
+
+<!-- 通常画面のもう一度遊ぶボタン -->
+
+<button
+  id="restartButton"
+  onclick="startGame()">
+
+  🔄 もう一度遊ぶ
+
+</button>
+
+
+<div id="gameWrapper">
+
+  <canvas
+    id="game"
+    width="1400"
+    height="800">
+  </canvas>
+
+
+  <!-- 爆発 -->
+
+  <div id="explosion">
+
+    <div class="fire"></div>
+
+    <div class="spark s1"></div>
+    <div class="spark s2"></div>
+    <div class="spark s3"></div>
+    <div class="spark s4"></div>
+    <div class="spark s5"></div>
+    <div class="spark s6"></div>
+    <div class="spark s7"></div>
+    <div class="spark s8"></div>
+
+  </div>
+
+</div>
+
+
+<footer>
+
+  黒い壁・赤い障害物に触れたら爆発！ 💥
+
+</footer>
+
+
+<!-- ==================================================
+     🎉 クリア画面
+================================================== -->
+
+<div id="clearScreen">
+
+  <div id="clearTitle">
+    🎉 CLEAR!! 🎉
+  </div>
+
+  <div id="clearSub">
+    🏆 完全クリア！ 🏆
+  </div>
+
+  <!-- クリア画面のもう一度遊ぶボタン -->
+
+  <button
+    id="clearRestartButton"
+    onclick="startGame()">
+
+    🔄 もう一度遊ぶ
+
+  </button>
+
+</div>
+
+
+<script>
+
+/* =================================
+   基本設定
+================================= */
+
+const canvas =
+  document.getElementById("game");
+
+const ctx =
+  canvas.getContext("2d");
+
+const message =
+  document.getElementById("message");
+
+const explosion =
+  document.getElementById("explosion");
+
+const gameWrapper =
+  document.getElementById("gameWrapper");
+
+const clearScreen =
+  document.getElementById("clearScreen");
+
+
+/* =================================
+   迷路
+================================= */
+
+const COLS = 45;
+const ROWS = 26;
+
+const CELL_W =
+  canvas.width / COLS;
+
+const CELL_H =
+  canvas.height / ROWS;
+
+
+/* =================================
+   ゲーム状態
+================================= */
+
+let maze = [];
+
+let gameRunning = false;
+
+let animation;
+
+
+/* =================================
+   プレイヤー
+================================= */
+
+let player = {
+
+  x: CELL_W / 2,
+  y: CELL_H / 2,
+
+  radius: 9
+
+};
+
+
+/* =================================
+   ゴール
+================================= */
+
+const goal = {
+
+  x:
+    canvas.width -
+    CELL_W / 2,
+
+  y:
+    canvas.height -
+    CELL_H / 2
+
+};
+
+
+/* =================================
+   レーザー
+================================= */
+
+let lasers = [];
+
+
+/* =================================
+   迷路生成
+================================= */
+
+function createMaze() {
+
+  maze = [];
+
+
+  /* 全部壁 */
+
+  for (
+    let y = 0;
+    y < ROWS;
+    y++
+  ) {
+
+    maze[y] = [];
+
+    for (
+      let x = 0;
+      x < COLS;
+      x++
+    ) {
+
+      maze[y][x] = 1;
+
+    }
+  }
+
+
+  /* DFS */
+
+  const stack = [];
+
+  maze[0][0] = 0;
+
+  stack.push({
+    x: 0,
+    y: 0
+  });
+
+
+  while (
+    stack.length > 0
+  ) {
+
+    const current =
+      stack[
+        stack.length - 1
+      ];
+
+
+    const directions = [
+
+      { dx: 2, dy: 0 },
+      { dx: -2, dy: 0 },
+      { dx: 0, dy: 2 },
+      { dx: 0, dy: -2 }
+
+    ];
+
+
+    directions.sort(
+      () =>
+        Math.random() - 0.5
+    );
+
+
+    let moved = false;
+
+
+    for (
+      const dir of directions
+    ) {
+
+      const nx =
+        current.x + dir.dx;
+
+      const ny =
+        current.y + dir.dy;
+
+
+      if (
+
+        nx >= 0 &&
+        nx < COLS &&
+        ny >= 0 &&
+        ny < ROWS &&
+
+        maze[ny][nx] === 1
+
+      ) {
+
+        maze[
+          current.y +
+          dir.dy / 2
+        ][
+          current.x +
+          dir.dx / 2
+        ] = 0;
+
+
+        maze[ny][nx] = 0;
+
+
+        stack.push({
+          x: nx,
+          y: ny
+        });
+
+
+        moved = true;
+
+        break;
+
+      }
+
+    }
+
+
+    if (!moved) {
+      stack.pop();
+    }
+  }
+
+
+  /* 分岐を追加 */
+
+  for (
+    let i = 0;
+    i < 180;
+    i++
+  ) {
+
+    const x =
+      1 +
+      Math.floor(
+        Math.random() *
+        (COLS - 2)
+      );
+
+
+    const y =
+      1 +
+      Math.floor(
+        Math.random() *
+        (ROWS - 2)
+      );
+
+
+    let openCount = 0;
+
+
+    if (maze[y - 1][x] === 0)
+      openCount++;
+
+    if (maze[y + 1][x] === 0)
+      openCount++;
+
+    if (maze[y][x - 1] === 0)
+      openCount++;
+
+    if (maze[y][x + 1] === 0)
+      openCount++;
+
+
+    if (openCount >= 2) {
+      maze[y][x] = 0;
+    }
+  }
+
+
+  /* START */
+
+  maze[0][0] = 0;
+  maze[0][1] = 0;
+  maze[1][0] = 0;
+
+
+  /* GOAL */
+
+  maze[
+    ROWS - 1
+  ][
+    COLS - 1
+  ] = 0;
+
+  maze[
+    ROWS - 1
+  ][
+    COLS - 2
+  ] = 0;
+
+  maze[
+    ROWS - 2
+  ][
+    COLS - 1
+  ] = 0;
+
+}
+
+
+/* =================================
+   レーザー生成
+================================= */
+
+function createLasers() {
+
+  lasers = [];
+
+
+  /* 横レーザー */
+
+  for (
+    let i = 0;
+    i < 10;
+    i++
+  ) {
+
+    lasers.push({
+
+      type: "horizontal",
+
+      x:
+        Math.random() *
+        canvas.width,
+
+      y:
+        30 +
+        Math.random() *
+        (canvas.height - 60),
+
+      width:
+        80 +
+        Math.random() * 90,
+
+      height: 7,
+
+      speed:
+        1 +
+        Math.random() * 2.5,
+
+      direction:
+        Math.random() > 0.5
+          ? 1
+          : -1
+
+    });
+  }
+
+
+  /* 縦レーザー */
+
+  for (
+    let i = 0;
+    i < 8;
+    i++
+  ) {
+
+    lasers.push({
+
+      type: "vertical",
+
+      x:
+        30 +
+        Math.random() *
+        (canvas.width - 60),
+
+      y:
+        Math.random() *
+        canvas.height,
+
+      width: 7,
+
+      height:
+        80 +
+        Math.random() * 100,
+
+      speed:
+        1 +
+        Math.random() * 2.5,
+
+      direction:
+        Math.random() > 0.5
+          ? 1
+          : -1
+
+    });
+  }
+}
+
+
+/* =================================
+   プレイヤーをSTARTへ
+================================= */
+
+function resetPlayer() {
+
+  player.x =
+    CELL_W / 2;
+
+  player.y =
+    CELL_H / 2;
+}
+
+
+/* =================================
+   ゲーム開始
+================================= */
+
+function startGame() {
+
+  cancelAnimationFrame(
+    animation
+  );
+
+
+  gameRunning = false;
+
+
+  /* クリア画面を消す */
+
+  clearScreen.classList.remove(
+    "show"
+  );
+
+
+  /* 紙吹雪を消す */
+
+  document
+    .querySelectorAll(".confetti")
+    .forEach(
+      e => e.remove()
+    );
+
+
+  /* 星を消す */
+
+  document
+    .querySelectorAll(".star")
+    .forEach(
+      e => e.remove()
+    );
+
+
+  /* 爆発を消す */
+
+  explosion.classList.remove(
+    "active"
+  );
+
+
+  gameWrapper.classList.remove(
+    "shake"
+  );
+
+
+  createMaze();
+
+  createLasers();
+
+  resetPlayer();
+
+
+  message.textContent =
+    "新しい迷路を生成中……";
+
+
+  setTimeout(() => {
+
+    gameRunning = true;
+
+    message.textContent =
+      "時間制限なし！GOALを目指せ！";
+
+    gameLoop();
+
+  }, 400);
+}
+
+
+/* =================================
+   ゲームループ
+================================= */
+
+function gameLoop() {
+
+  draw();
+
+  updateLasers();
+
+
+  if (gameRunning) {
+
+    checkCollision();
+
+    animation =
+      requestAnimationFrame(
+        gameLoop
+      );
+  }
+}
+
+
+/* =================================
+   描画
+================================= */
+
+function draw() {
+
+  ctx.fillStyle = "white";
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  /* 壁 */
+
+  for (
+    let y = 0;
+    y < ROWS;
+    y++
+  ) {
+
+    for (
+      let x = 0;
+      x < COLS;
+      x++
+    ) {
+
+      if (
+        maze[y][x] === 1
+      ) {
+
+        ctx.fillStyle =
+          "#111";
+
+        ctx.fillRect(
+
+          x * CELL_W,
+          y * CELL_H,
+
+          CELL_W + 1,
+          CELL_H + 1
+
+        );
+      }
+    }
+  }
+
+
+  /* START */
+
+  ctx.fillStyle =
+    "#00aa00";
+
+  ctx.fillRect(
+
+    3,
+    3,
+
+    CELL_W * 2 - 6,
+    CELL_H * 2 - 6
+
+  );
+
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "bold 18px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+
+    "START",
+
+    CELL_W,
+    CELL_H + 5
+
+  );
+
+
+  /* GOAL */
+
+  ctx.fillStyle =
+    "gold";
+
+  ctx.fillRect(
+
+    canvas.width -
+      CELL_W * 2 + 3,
+
+    canvas.height -
+      CELL_H * 2 + 3,
+
+    CELL_W * 2 - 6,
+    CELL_H * 2 - 6
+
+  );
+
+
+  ctx.fillStyle =
+    "red";
+
+  ctx.fillText(
+
+    "GOAL",
+
+    canvas.width -
+      CELL_W,
+
+    canvas.height -
+      CELL_H + 5
+
+  );
+
+
+  /* レーザー */
+
+  for (
+    const laser of lasers
+  ) {
+
+    ctx.fillStyle =
+      "#ff0000";
+
+    ctx.shadowColor =
+      "red";
+
+    ctx.shadowBlur = 15;
+
+
+    ctx.fillRect(
+
+      laser.x,
+      laser.y,
+
+      laser.width,
+      laser.height
+
+    );
+
+
+    ctx.shadowBlur = 0;
+  }
+
+
+  /* プレイヤー */
+
+  ctx.beginPath();
+
+  ctx.arc(
+
+    player.x,
+    player.y,
+
+    player.radius,
+
+    0,
+    Math.PI * 2
+
+  );
+
+
+  ctx.fillStyle =
+    "#0066ff";
+
+  ctx.fill();
+
+
+  ctx.strokeStyle =
+    "#001f99";
+
+  ctx.lineWidth = 3;
+
+  ctx.stroke();
+}
+
+
+/* =================================
+   レーザー更新
+================================= */
+
+function updateLasers() {
+
+  for (
+    const laser of lasers
+  ) {
+
+    if (
+      laser.type ===
+      "horizontal"
+    ) {
+
+      laser.x +=
+        laser.speed *
+        laser.direction;
+
+
+      if (
+        laser.x >
+        canvas.width
+      ) {
+
+        laser.x =
+          -laser.width;
+      }
+
+
+      if (
+        laser.x +
+        laser.width <
+        0
+      ) {
+
+        laser.x =
+          canvas.width;
+      }
+    }
+
+
+    if (
+      laser.type ===
+      "vertical"
+    ) {
+
+      laser.y +=
+        laser.speed *
+        laser.direction;
+
+
+      if (
+        laser.y >
+        canvas.height
+      ) {
+
+        laser.y =
+          -laser.height;
+      }
+
+
+      if (
+        laser.y +
+        laser.height <
+        0
+      ) {
+
+        laser.y =
+          canvas.height;
+      }
+    }
+  }
+}
+
+
+/* =================================
+   衝突判定
+================================= */
+
+function checkCollision() {
+
+  const left =
+    Math.floor(
+      (player.x -
+        player.radius) /
+      CELL_W
+    );
+
+  const right =
+    Math.floor(
+      (player.x +
+        player.radius) /
+      CELL_W
+    );
+
+  const top =
+    Math.floor(
+      (player.y -
+        player.radius) /
+      CELL_H
+    );
+
+  const bottom =
+    Math.floor(
+      (player.y +
+        player.radius) /
+      CELL_H
+    );
+
+
+  /* 壁 */
+
+  for (
+    let y = top;
+    y <= bottom;
+    y++
+  ) {
+
+    for (
+      let x = left;
+      x <= right;
+      x++
+    ) {
+
+      if (
+
+        x >= 0 &&
+        x < COLS &&
+        y >= 0 &&
+        y < ROWS &&
+
+        maze[y][x] === 1
+
+      ) {
+
+        if (
+
+          circleRectCollision(
+
+            player.x,
+            player.y,
+            player.radius,
+
+            x * CELL_W,
+            y * CELL_H,
+
+            CELL_W,
+            CELL_H
+
+          )
+
+        ) {
+
+          gameOver();
+
+          return;
+        }
+      }
+    }
+  }
+
+
+  /* レーザー */
+
+  for (
+    const laser of lasers
+  ) {
+
+    if (
+
+      circleRectCollision(
+
+        player.x,
+        player.y,
+        player.radius,
+
+        laser.x,
+        laser.y,
+
+        laser.width,
+        laser.height
+
+      )
+
+    ) {
+
+      gameOver();
+
+      return;
+    }
+  }
+
+
+  /* GOAL */
+
+  const distance =
+    Math.hypot(
+
+      player.x -
+        goal.x,
+
+      player.y -
+        goal.y
+
+    );
+
+
+  if (
+    distance < 35
+  ) {
+
+    gameClear();
+  }
+}
+
+
+/* =================================
+   円と四角形の衝突
+================================= */
+
+function circleRectCollision(
+
+  cx,
+  cy,
+  radius,
+
+  rx,
+  ry,
+  rw,
+  rh
+
+) {
+
+  const closestX =
+    Math.max(
+      rx,
+      Math.min(
+        cx,
+        rx + rw
+      )
+    );
+
+
+  const closestY =
+    Math.max(
+      ry,
+      Math.min(
+        cy,
+        ry + rh
+      )
+    );
+
+
+  const dx =
+    cx -
+    closestX;
+
+
+  const dy =
+    cy -
+    closestY;
+
+
+  return (
+
+    dx * dx +
+    dy * dy
+
+  ) <
+    radius * radius;
+}
+
+
+/* =================================
+   マウス操作
+================================= */
+
+canvas.addEventListener(
+  "mousemove",
+  function(event) {
+
+    if (!gameRunning)
+      return;
+
+
+    const rect =
+      canvas.getBoundingClientRect();
+
+
+    const scaleX =
+      canvas.width /
+      rect.width;
+
+
+    const scaleY =
+      canvas.height /
+      rect.height;
+
+
+    player.x =
+      (event.clientX -
+        rect.left) *
+      scaleX;
+
+
+    player.y =
+      (event.clientY -
+        rect.top) *
+      scaleY;
+
+
+    checkCollision();
+
+  }
+);
+
+
+/* =================================
+   タッチ操作
+================================= */
+
+canvas.addEventListener(
+
+  "touchmove",
+
+  function(event) {
+
+    event.preventDefault();
+
+
+    if (!gameRunning)
+      return;
+
+
+    const touch =
+      event.touches[0];
+
+
+    const rect =
+      canvas.getBoundingClientRect();
+
+
+    const scaleX =
+      canvas.width /
+      rect.width;
+
+
+    const scaleY =
+      canvas.height /
+      rect.height;
+
+
+    player.x =
+      (touch.clientX -
+        rect.left) *
+      scaleX;
+
+
+    player.y =
+      (touch.clientY -
+        rect.top) *
+      scaleY;
+
+
+    checkCollision();
+
+  },
+
+  {
+    passive: false
+  }
+);
+
+
+/* =================================
+   ゲームオーバー
+================================= */
+
+function gameOver() {
+
+  if (!gameRunning)
+    return;
+
+
+  gameRunning = false;
+
+
+  cancelAnimationFrame(
+    animation
+  );
+
+
+  message.textContent =
+    "💥 BOOOOOOM!! 壁に触れた！";
+
+
+  explosion.classList.remove(
+    "active"
+  );
+
+
+  void explosion.offsetWidth;
+
+
+  explosion.classList.add(
+    "active"
+  );
+
+
+  gameWrapper.classList.remove(
+    "shake"
+  );
+
+
+  void gameWrapper.offsetWidth;
+
+
+  gameWrapper.classList.add(
+    "shake"
+  );
+
+
+  draw();
+}
+
+
+/* ==================================================
+   🎉 クリア
+================================================== */
+
+function gameClear() {
+
+  if (!gameRunning)
+    return;
+
+
+  gameRunning = false;
+
+
+  cancelAnimationFrame(
+    animation
+  );
+
+
+  message.textContent =
+    "🎉 CLEAR!! 🎉";
+
+
+  /* クリア画面表示 */
+
+  clearScreen.classList.add(
+    "show"
+  );
+
+
+  /* 紙吹雪 */
+
+  createConfetti();
+
+
+  /* 星 */
+
+  createStars();
+}
+
+
+/* =================================
+   紙吹雪
+================================= */
+
+function createConfetti() {
+
+  document
+    .querySelectorAll(
+      ".confetti"
+    )
+    .forEach(
+      e => e.remove()
+    );
+
+
+  const colors = [
+
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+    "#ffff00",
+    "#ff00ff",
+    "#00ffff",
+    "#ff8800",
+    "#ffffff"
+
+  ];
+
+
+  for (
+    let i = 0;
+    i < 200;
+    i++
+  ) {
+
+    const piece =
+      document.createElement(
+        "div"
+      );
+
+
+    piece.className =
+      "confetti";
+
+
+    piece.style.left =
+      Math.random() * 100 +
+      "%";
+
+
+    piece.style.background =
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+
+    piece.style.animationDuration =
+      2 +
+      Math.random() * 4 +
+      "s";
+
+
+    piece.style.animationDelay =
+      Math.random() * 1.5 +
+      "s";
+
+
+    clearScreen.appendChild(
+      piece
+    );
+  }
+}
+
+
+/* =================================
+   星
+================================= */
+
+function createStars() {
+
+  document
+    .querySelectorAll(
+      ".star"
+    )
+    .forEach(
+      e => e.remove()
+    );
+
+
+  for (
+    let i = 0;
+    i < 40;
+    i++
+  ) {
+
+    const star =
+      document.createElement(
+        "div"
+      );
+
+
+    star.className =
+      "star";
+
+
+    star.textContent =
+      "⭐";
+
+
+    star.style.left =
+      Math.random() * 100 +
+      "%";
+
+
+    star.style.top =
+      Math.random() * 100 +
+      "%";
+
+
+    star.style.animationDelay =
+      Math.random() +
+      "s";
+
+
+    clearScreen.appendChild(
+      star
+    );
+  }
+}
+
+
+/* =================================
+   ゲーム開始
+================================= */
+
+startGame();
+
+</script>
 
 </body>
 </html>
